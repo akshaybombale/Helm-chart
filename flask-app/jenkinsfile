@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                  git branch: 'main', url: 'https://github.com/akshaybombale/Helm-chart.git'
+            }
+        }
+         stage ('deploy'){
+             steps {
+                 script{
+                     withKubeConfig([credentialsId: 'kubernetes_config']){
+                         sh '''
+                          
+                          cd /home/ubuntu/Helm-chart
+                          helm list
+                          helm upgrade system flask-app 
+                          kubectl get pods
+                          minikube service system-flask-app-to-monitor-cpu-and-memory
+                         '''
+                     }
+                 }
+             }
+         }
+    }
+}
